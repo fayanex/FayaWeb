@@ -1,0 +1,199 @@
+/* ---- self-hosted fonts (no network needed at build or runtime) ---- */
+@import '@fontsource/saira/400.css';
+@import '@fontsource/saira/500.css';
+@import '@fontsource/saira/600.css';
+@import '@fontsource/saira/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Saira';
+  --font-body: 'Inter';
+  --font-mono: 'JetBrains Mono';
+  --void: #0a0a0c;
+  --surface: #141417;
+  --line: #2a2a2e;
+  --silver: #969598;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: #d7d7da;
+  font-family: var(--font-body), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(232, 232, 236, 0.18); color: #fff; }
+
+/* ---- ambient grain over the whole page ---- */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- brushed-steel heading text ---- */
+.steel {
+  background: linear-gradient(
+    100deg,
+    #5a5a60 0%,
+    #e8e8ec 22%,
+    #ffffff 38%,
+    #9a9aa0 55%,
+    #e4e5e9 72%,
+    #5a5a60 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: sheen 9s ease-in-out infinite;
+}
+@keyframes sheen {
+  0%, 100% { background-position: 0% 0; }
+  50% { background-position: 100% 0; }
+}
+
+/* ---- thin reflective rule ---- */
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--line) 12%, #4a4a50 50%, var(--line) 88%, transparent);
+}
+
+/* ---- the blade: diagonal light streak echoing the slash through the E ---- */
+.blade {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+  overflow: visible;
+}
+.blade::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  height: 1px;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  transform: skewX(-60deg);
+  animation: blade-run 6s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  filter: blur(0.3px);
+}
+@keyframes blade-run {
+  0% { left: -40%; opacity: 0; }
+  12% { opacity: 1; }
+  60% { left: 100%; opacity: 1; }
+  61%, 100% { opacity: 0; left: 100%; }
+}
+
+/* ---- mono eyebrow label ---- */
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+/* ---- buttons ---- */
+.btn-chrome {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #0a0a0c;
+  background: linear-gradient(160deg, #f4f4f6, #b9b9be 55%, #87878d);
+  border: none;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
+}
+.btn-chrome:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px -12px rgba(255, 255, 255, 0.45);
+}
+.btn-chrome::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -120%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.btn-chrome:hover::before { left: 130%; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #d7d7da;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.015);
+  transition: border-color 0.4s ease, color 0.4s ease, background 0.4s ease;
+}
+.btn-ghost:hover { border-color: #6a6a70; color: #fff; background: rgba(255, 255, 255, 0.04); }
+
+/* ---- card with reflective edge on hover ---- */
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  border: 1px solid var(--line);
+  transition: border-color 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.panel:hover { border-color: #50505a; transform: translateY(-4px); }
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(130deg, transparent 40%, rgba(255, 255, 255, 0.35), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.panel:hover::after { opacity: 1; }
+
+/* ---- focus visibility ---- */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid #e4e5e9;
+  outline-offset: 3px;
+}
+
+/* ---- reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .steel { background-position: 30% 0; }
+}
