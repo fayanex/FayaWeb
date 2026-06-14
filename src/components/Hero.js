@@ -3,6 +3,9 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Shell } from '@/components/Section';
+import MachineCutaway from '@/components/MachineCutaway';
+
+const stages = ['Polymer in', 'Extrude', 'Draw tape', 'Weave', 'Woven bag'];
 
 export default function Hero() {
   const ref = useRef(null);
@@ -23,15 +26,15 @@ export default function Hero() {
     <section
       ref={ref}
       onMouseMove={onMove}
-      className="relative flex min-h-[100svh] items-center overflow-hidden"
-      style={{ '--mx': '50%', '--my': '40%' }}
+      className="relative overflow-hidden"
+      style={{ '--mx': '50%', '--my': '32%' }}
     >
       {/* pointer-tracked light pooling on the metal */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(620px circle at var(--mx) var(--my), rgba(120,122,130,0.18), transparent 60%)',
+            'radial-gradient(640px circle at var(--mx) var(--my), rgba(120,122,130,0.18), transparent 60%)',
         }}
         aria-hidden="true"
       />
@@ -45,53 +48,70 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <Shell className="relative z-[2] py-28">
-        <motion.p
-          className="eyebrow"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease }}
-        >
-          Industrial Machinery &middot; Industry 5.0
-        </motion.p>
+      <Shell className="relative z-[2] pb-20 pt-36">
+        <div className="max-w-3xl">
+          <motion.p
+            className="eyebrow"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15, ease }}
+          >
+            Industrial Machinery &middot; Industry 5.0
+          </motion.p>
 
-        {/* the wordmark, lit in from darkness */}
+          <motion.div
+            className="mt-7"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, filter: 'blur(14px)', scale: 0.98 }}
+            animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
+            transition={{ duration: 1.3, delay: 0.3, ease }}
+          >
+            <img src="/fayanex-logo.png" alt="Fayanex" className="w-full max-w-[440px]" fetchPriority="high" />
+          </motion.div>
+
+          <motion.h1
+            className="mt-9 max-w-2xl font-display text-2xl font-medium leading-[1.25] text-chrome sm:text-[2rem]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.55, ease }}
+          >
+            One machine. Extrusion to finished bag, in a single closed system.
+          </motion.h1>
+
+          <motion.p
+            className="mt-5 max-w-xl text-base leading-relaxed text-silver"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.7, ease }}
+          >
+            An integrated, intelligent woven-bag machine built on Industry 5.0 architecture
+            &mdash; sensing and coordinating its own process, end to end. Designed and developed in India.
+          </motion.p>
+        </div>
+
+        {/* the machine */}
         <motion.div
-          className="mt-8"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, filter: 'blur(14px)', scale: 0.98 }}
-          animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-          transition={{ duration: 1.4, delay: 0.35, ease }}
+          className="mt-14 sm:mt-16"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.85, ease }}
         >
-          <img
-            src="/fayanex-logo.png"
-            alt="Fayanex"
-            className="w-full max-w-[760px]"
-            fetchPriority="high"
-          />
+          <div className="-mx-6 overflow-x-auto px-6 [scrollbar-width:none] sm:mx-0 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+            <MachineCutaway className="w-full min-w-[720px] sm:min-w-0" />
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-x-7 gap-y-3 border-t border-line pt-5">
+            {stages.map((s, i) => (
+              <div key={s} className="flex items-center gap-2.5">
+                <span className="font-mono text-[0.62rem] text-muted">{`0${i + 1}`}</span>
+                <span className="h-1.5 w-1.5 rotate-45 bg-gradient-to-br from-white to-silver" />
+                <span className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-silver">{s}</span>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
-        <motion.h1
-          className="mt-10 max-w-2xl font-display text-2xl font-medium leading-[1.25] text-chrome sm:text-[2rem]"
-          initial={{ opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.7, ease }}
-        >
-          One machine. Extrusion to finished bag, in a single closed system.
-        </motion.h1>
-
-        <motion.p
-          className="mt-5 max-w-xl text-base leading-relaxed text-silver"
-          initial={{ opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.85, ease }}
-        >
-          We are engineering an integrated, intelligent woven-bag machine built
-          on Industry 5.0 architecture &mdash; designed and developed in India.
-        </motion.p>
-
         <motion.div
-          className="mt-10 flex flex-wrap items-center gap-4"
-          initial={{ opacity: 0, y: 22 }}
+          className="mt-12 flex flex-wrap items-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 1.0, ease }}
         >
@@ -103,17 +123,6 @@ export default function Hero() {
           </Link>
         </motion.div>
       </Shell>
-
-      {/* scroll cue */}
-      <motion.div
-        className="absolute bottom-7 left-1/2 z-[2] -translate-x-1/2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.4 }}
-        aria-hidden="true"
-      >
-        <div className="h-10 w-px bg-gradient-to-b from-silver to-transparent" />
-      </motion.div>
     </section>
   );
 }

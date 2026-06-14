@@ -10,12 +10,17 @@ identity derived from the Fayanex logo.
 
 ```
 src/app/            Pages: home, technology, products, about, team, contact
-src/components/     Nav, Footer, Hero, Reveal, WovenThreads, TechProcess, ContactForm, ...
+src/components/     Nav, Footer, Hero, MachineCutaway, ClosedVsLine, FeedbackLoop,
+                    Roadmap, MysoreMap, TechProcess, Reveal, WovenThreads, ContactForm, ...
 public/             Logo, favicon, founder photos
 next.config.js      Static export config (output: 'export')
+server.js           Express process that serves the built out/ folder
 ```
 
-The site builds to a folder of plain static files (`out/`) — no running server needed.
+`npm run build` produces a static site in `out/`. `server.js` (Express) serves that
+folder on `process.env.PORT`, so the site runs as a genuine Node.js application — which
+is what Hostinger's Node.js hosting expects. (We don't use `next start`; it doesn't work
+with `output: 'export'`.)
 
 ---
 
@@ -28,11 +33,15 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-To produce the deployable static files:
+To produce the deployable site and run it as the Node.js app (what Hostinger runs):
 
 ```bash
-npm run build        # outputs to the "out/" folder
+npm run build        # outputs the static site to the "out/" folder
+npm start            # node server.js — serves out/ on $PORT (default 3000)
 ```
+
+The order is always **install → build → start**. `server.js` exits with a clear message
+if `out/` is missing (i.e. the build step was skipped).
 
 ---
 
@@ -76,34 +85,38 @@ git push -u origin main
 
 ## 5. Deploy on Hostinger (Business plan)
 
-### Option A — Connect the GitHub repo (recommended)
+### Option A — Run it as a Node.js app (recommended, matches `server.js`)
 
-1. hPanel → your website → **Advanced → Node.js** (or **Git** → *Create a new app from a repository*).
-2. Connect the GitHub repository and choose the `main` branch.
-3. Set:
-   - **Build command:** `npm run build`
-   - **Output / public directory:** `out`
+1. hPanel → **Advanced → Node.js → Create application**.
+2. Set:
+   - **Application root:** the repo folder (must contain `package.json` and `server.js` at its top level).
+   - **Application startup file:** `server.js`
    - **Node version:** 18 or 20
-4. Add the environment variable `NEXT_PUBLIC_FORMSPREE_ID` (from step 3 above).
-5. Deploy. Future `git push`es to `main` redeploy automatically.
+   - **Application URL:** your domain
+3. Add the environment variable `NEXT_PUBLIC_FORMSPREE_ID` (from step 3 above).
+4. Run **npm install**.
+5. Run **`npm run build` once** (NPM scripts / run-command / terminal) — this creates `out/`.
+6. **Restart** the application.
 
-### Option B — Upload the built files (simplest, no build on server)
+The order is always **install → build → restart**.
+
+> **503 troubleshooting:** almost always means `out/` doesn't exist (the build step was
+> skipped) or the startup file isn't set to `server.js`. Re-run install → build → restart.
+
+### Option B — Upload the built files (static, no Node process)
 
 1. Run `npm run build` locally.
 2. Open hPanel → **File Manager** → `public_html`.
 3. Upload everything **inside** the `out/` folder into `public_html`
    (the contents, not the folder itself).
-4. Done — the site is live on your domain.
-
-> A pre-built copy is provided as `fayanex-build.zip` for Option B. If you set up the
-> Formspree ID, rebuild so the live form points at it (the pre-built copy uses the
-> email fallback).
+4. Done — the site is live on your domain. (No `server.js` needed for this route, since
+   `out/` is plain static HTML.)
 
 ---
 
 ## 6. Editing content
 
-- **Founder bios** — `src/app/team/page.js` (marked as placeholders; replace the `bio` lines).
+- **Founder bios** — `src/app/team/page.js` (edit the `bio`, `role`, `degree` and `focus` fields).
 - **Logo** — replace `public/fayanex-logo.png` (hero) and `public/fayanex-logo-sm.png` (nav).
 - **Copy / headings** — each page lives in `src/app/<page>/page.js`.
 - **Colors** — defined in `tailwind.config.js` and `src/app/globals.css` (`:root`).
