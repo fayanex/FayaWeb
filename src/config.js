@@ -10,4 +10,4 @@
 
 export const SHEET_ENDPOINT =
   process.env.NEXT_PUBLIC_SHEET_ENDPOINT ||
-  'https://script.google.com/macros/s/AKfycbxiDzQazXD4n-p5Awml_xNYaSWIQQyDAdtZf5cttbDXhXS5sHN_heTDUX8e9DJpK8HVBA/exec';
+  'https://script.google.com/macros/s/AKfycbxOnUbrTJOWcUwTcKdtTgoXUkuzUTwIFeUUinyWNzvtxuK2BfL5R7dGpGzowm-76CJo-w/exec';
