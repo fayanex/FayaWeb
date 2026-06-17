@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { SHEET_ENDPOINT } from '@/config';
+
+const FORM_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
 
 export default function ContactForm() {
   const [status, setStatus] = useState('idle'); // idle | sending | ok | error
@@ -13,7 +14,7 @@ export default function ContactForm() {
       setStatus('error');
       return;
     }
-    if (!SHEET_ENDPOINT || SHEET_ENDPOINT.includes('PASTE_')) {
+    if (!FORM_ID || FORM_ID === 'your_form_id_here') {
       // No endpoint configured yet — fall back to email so nothing is lost.
       window.location.href =
         `mailto:contact@fayanex.com?subject=Enquiry from ${encodeURIComponent(
@@ -23,17 +24,17 @@ export default function ContactForm() {
     }
     try {
       setStatus('sending');
-      // Posted as form-encoded with no-cors: this is the reliable way to reach a
-      // Google Apps Script web app from a static site (avoids CORS preflight).
-      // The response is opaque, so we optimistically treat a completed POST as success.
-      await fetch(SHEET_ENDPOINT, {
+      const res = await fetch(`https://formspree.io/f/${FORM_ID}`, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data).toString(),
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
       });
-      setStatus('ok');
-      setData({ name: '', email: '', company: '', message: '' });
+      if (res.ok) {
+        setStatus('ok');
+        setData({ name: '', email: '', company: '', message: '' });
+      } else {
+        setStatus('error');
+      }
     } catch {
       setStatus('error');
     }

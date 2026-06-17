@@ -36,14 +36,26 @@ npm run build        # outputs to the "out/" folder
 
 ---
 
-## 3. Contact form -> Google Sheet
+## 3. Contact form (one-time setup)
 
-Clicking **Send Message** appends a row (with timestamp) to a Google Sheet.
-Full steps are in **SETUP.md**; the script to paste is **APPS_SCRIPT.gs**. In short:
-create a sheet, paste the Apps Script, deploy it as a Web app, and put the resulting
-`/exec` URL into `src/config.js` (or the `NEXT_PUBLIC_SHEET_ENDPOINT` env var).
-Until a URL is set, the form falls back to opening the visitor's email app.
+The form uses **Formspree** (free) so it works on static hosting.
 
+1. Create a free account at https://formspree.io and a new form that delivers to
+   **contact@fayanex.com**.
+2. Copy the form ID (the part after `/f/` in your endpoint).
+3. Create a file named `.env.local` (copy from `.env.example`) and set:
+
+   ```
+   NEXT_PUBLIC_FORMSPREE_ID=your_form_id_here
+   ```
+
+4. Rebuild (`npm run build`). On Hostinger, add the same variable in the app's
+   environment settings before building there.
+
+Until an ID is set, the form gracefully falls back to opening the visitor's email
+client addressed to contact@fayanex.com, so no message is ever lost.
+
+---
 
 ## 4. Push to GitHub
 
@@ -62,36 +74,30 @@ git push -u origin main
 
 ---
 
-## 5. Deploy on Hostinger as a Node.js application (Business plan)
+## 5. Deploy on Hostinger (Business plan)
 
-This project runs as a real Node.js app: `npm run build` generates the static
-site into `out/`, and `server.js` (Express) serves it on the port Hostinger
-assigns. That's what keeps it from showing a 503.
+### Option A — Connect the GitHub repo (recommended)
 
-1. hPanel → your website → **Advanced → Node.js** → **Create application**.
-2. Set:
-   - **Application root:** the folder containing this project (where `package.json` is)
-   - **Application startup file:** `server.js`
+1. hPanel → your website → **Advanced → Node.js** (or **Git** → *Create a new app from a repository*).
+2. Connect the GitHub repository and choose the `main` branch.
+3. Set:
+   - **Build command:** `npm run build`
+   - **Output / public directory:** `out`
    - **Node version:** 18 or 20
-   - **Application URL:** your domain
-3. Add the environment variable `NEXT_PUBLIC_FORMSPREE_ID` (see step 3 above).
-4. Click **Run npm install**.
-5. Run the build once: in the app's **NPM scripts**/**Run command** area (or the
-   terminal), run `npm run build`. This creates the `out/` folder the server needs.
-6. **Start / Restart** the application.
+4. Add the environment variable `NEXT_PUBLIC_FORMSPREE_ID` (from step 3 above).
+5. Deploy. Future `git push`es to `main` redeploy automatically.
 
-Your domain now serves the site through Node. After any future change, push to
-GitHub (or upload), then `npm run build` + restart.
+### Option B — Upload the built files (simplest, no build on server)
 
-> Important: the app needs the `out/` folder to exist, which `npm run build`
-> creates. If you ever see a 503, it almost always means the build step hasn't
-> been run yet, or the startup file isn't set to `server.js`.
+1. Run `npm run build` locally.
+2. Open hPanel → **File Manager** → `public_html`.
+3. Upload everything **inside** the `out/` folder into `public_html`
+   (the contents, not the folder itself).
+4. Done — the site is live on your domain.
 
-### Alternative — serve as plain static files (no Node)
-
-If you'd rather not run a Node process: run `npm run build` and upload the
-**contents** of `out/` into `public_html` via File Manager. The provided
-`fayanex-build.zip` is exactly that.
+> A pre-built copy is provided as `fayanex-build.zip` for Option B. If you set up the
+> Formspree ID, rebuild so the live form points at it (the pre-built copy uses the
+> email fallback).
 
 ---
 
